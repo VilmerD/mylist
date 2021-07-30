@@ -19,8 +19,11 @@ class CardAdapter(var cardList: CardList) : RecyclerView.Adapter<CardAdapter.Car
     override fun onBindViewHolder(holder: CardHolder, position: Int) {
         val card = cardList.cards[position]
 
+        val rawBitmap = PhotoActivity.makeBitmap(card.file)
+        holder.imageView.setImageBitmap(rawBitmap)
         holder.nameView.text = card.name
         val counts = card.counts
+
         holder.iterButton.text = "Counts: $counts"
         holder.iterButton.setOnClickListener {
             val its = card.iterateCounts()
@@ -37,5 +40,7 @@ class CardAdapter(var cardList: CardList) : RecyclerView.Adapter<CardAdapter.Car
         var nameView: TextView = itemView.findViewById(R.id.nameTextView)
         var iterButton: Button = itemView.findViewById(R.id.iterButton)
     }
+
+
 
 }

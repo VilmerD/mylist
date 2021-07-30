@@ -1,9 +1,9 @@
 package se.lth.solid.vilmer
 
-import android.graphics.Bitmap
+import java.io.File
 import java.io.Serializable
 
-class CardDataModel(val image: Bitmap?, val name: String, val tags: Array<String>?) : Serializable {
+class CardDataModel(var file: File, var name: String, var tags: Array<String>?) : Serializable {
     private val serialVersionUID: Long = -29238982928391L
     var counts: Int = 0
 

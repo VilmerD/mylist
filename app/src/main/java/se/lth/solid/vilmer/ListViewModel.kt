@@ -15,8 +15,8 @@ class ListViewModel(private val handle: SavedStateHandle) : ViewModel() {
         myLists.add(CardList(name, arrayListOf()))
     }
 
-    fun addCard(image: Bitmap?, name: String, tags: Array<String>?) {
-        myLists[0].cards.add(CardDataModel(image, name, tags))
+    fun addCard(card: CardDataModel) {
+        myLists[0].cards.add(card)
     }
 
     companion object {

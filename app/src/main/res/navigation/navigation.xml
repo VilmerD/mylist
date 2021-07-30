@@ -2,19 +2,4 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation"
-    app:startDestination="@id/mainFragment">
-    <fragment
-        android:id="@+id/mainFragment"
-        android:name="se.lth.solid.vilmer.MainFragment"
-        android:label="MainFragment" >
-        <action
-            android:id="@+id/action_mainFragment_to_addCardFragment"
-            app:destination="@id/addCardFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/addCardFragment"
-        android:name="se.lth.solid.vilmer.AddCardFragment"
-        android:label="fragment_add_card"
-        tools:layout="@layout/fragment_add_card" />
-</navigation>
+    android:id="@+id/navigation" />
