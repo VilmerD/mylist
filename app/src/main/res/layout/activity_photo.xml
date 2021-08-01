@@ -19,6 +19,7 @@
 
         </androidx.camera.view.PreviewView>
 
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/camera_capture_button"
             android:layout_width="80dp"

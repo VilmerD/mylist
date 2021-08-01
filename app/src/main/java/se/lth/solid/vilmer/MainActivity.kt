@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.Window
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,10 +28,23 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mAdapter: CardAdapter
 
+    private var startAddCardActivity = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val card = result.data?.getSerializableExtra(AddCardActivity.CARD_EXTRA) as CardDataModel
+            val defaultPosition = mAdapter.cardList.cards.size
+            val position = result.data?.getIntExtra(
+                AddCardActivity.POSITION_EXTRA,
+                defaultPosition
+            )!!
+            mAdapter.cardList.cards.add(position, card)
+            mAdapter.notifyDataSetChanged()
+        }
+    }
+
     companion object {
         const val saveFileName = "myLists.sr1"
-        const val NAME_EXTRA = "se.lth.solid.vilmer.project3.NAME_EXTRA"
-        const val PATH_EXTRA = "se.lth.solid.vilmer.project3.PATH_EXTRA"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +62,10 @@ class MainActivity : AppCompatActivity() {
         val addCardButton = viewBinding.addCardButton
         addCardButton.setOnClickListener {
             val i = Intent(this, AddCardActivity::class.java)
-            startActivityForResult(i, 0)
+            val newCard = CardDataModel(null, "", null)
+            i.putExtra(AddCardActivity.CARD_EXTRA, newCard)
+            i.putExtra(AddCardActivity.POSITION_EXTRA, mAdapter.cardList.cards.size)
+            startAddCardActivity.launch(i)
         }
 
         viewBinding.bottomAppBar.setOnMenuItemClickListener { menuItem ->
@@ -63,20 +81,6 @@ class MainActivity : AppCompatActivity() {
         }
         viewBinding.bottomAppBar.setNavigationOnClickListener {
 
-        }
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                val name = data?.getStringExtra(NAME_EXTRA)
-                val path = data?.getSerializableExtra(PATH_EXTRA) as File
-                val newCard = CardDataModel(path, name!!, null)
-                mAdapter.cardList.cards.add(newCard)
-                mAdapter.notifyDataSetChanged()
-            }
         }
     }
 

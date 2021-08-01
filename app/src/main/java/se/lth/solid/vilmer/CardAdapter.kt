@@ -1,6 +1,5 @@
 package se.lth.solid.vilmer
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -21,15 +20,15 @@ class CardAdapter(var cardList: CardList) : RecyclerView.Adapter<CardAdapter.Car
     override fun onBindViewHolder(holder: CardHolder, position: Int) {
         val card = cardList.cards[position]
 
-        val rawBitmap = BitmapFactory.decodeFile(card.file.absolutePath)
+        val rawBitmap = BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
         holder.imageView.setImageBitmap(rawBitmap)
         holder.nameView.text = card.name
         val counts = card.counts
 
-        holder.iterButton.text = "Counts: $counts"
+        holder.iterButton.text = "$counts"
         holder.iterButton.setOnClickListener {
-            val its = card.iterateCounts()
-            holder.iterButton.text = "Counts: $its"
+            val counts = card.iterateCounts()
+            holder.iterButton.text = "$counts"
         }
     }
 

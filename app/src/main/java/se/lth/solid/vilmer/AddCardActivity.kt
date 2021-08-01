@@ -5,10 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.*
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import se.lth.solid.vilmer.databinding.ActivityAddCardBinding
 import java.io.File
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,12 +20,24 @@ class AddCardActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityAddCardBinding
 
-    private var name: String = ""
-    private var file: File? = null
+    lateinit var card: CardDataModel
+    var position: Int = 0
+
+    private val startForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val img = BitmapFactory.decodeFile(card.file!!.absolutePath)
+            viewBinding.imageView.setImageBitmap(img)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        card = intent!!.getSerializableExtra(CARD_EXTRA) as CardDataModel
+        position = intent!!.getIntExtra(POSITION_EXTRA, 0)
 
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_add_card)
 
@@ -35,13 +50,18 @@ class AddCardActivity : AppCompatActivity() {
 
     private fun takePicture() {
         val i = Intent(this, PhotoActivity::class.java)
-        file = File(filesDir,
-        SimpleDateFormat(FILENAME_FORMAT, Locale.US
-        ).format(System.currentTimeMillis()) + ".jpg")
+        if (card.file == null) {
+            card.file = File(
+                filesDir,
+                SimpleDateFormat(
+                    FILENAME_FORMAT, Locale.US
+                ).format(System.currentTimeMillis()) + ".jpg"
+            )
+        }
 
-        i.putExtra(PhotoActivity.FILE, file)
+        i.putExtra(PhotoActivity.FILE, card.file)
 
-        startActivityForResult(i, CAPTURE_IMAGE_REQUEST_CODE)
+        startForResult.launch(i)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -59,10 +79,8 @@ class AddCardActivity : AppCompatActivity() {
                 true
             }
             R.id.done -> {
-                name = viewBinding.nameEditText.editText?.text.toString()
-                val data = Intent()
-                data.putExtra(MainActivity.NAME_EXTRA, name)
-                data.putExtra(MainActivity.PATH_EXTRA, file)
+                card.name = viewBinding.nameEditText.editText?.text.toString()
+                val data = Intent().putExtra(CARD_EXTRA, card)
                 setResult(RESULT_OK, data)
                 finish()
                 true
@@ -73,21 +91,9 @@ class AddCardActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                val img = BitmapFactory.decodeFile(file!!.absolutePath)
-                val height = viewBinding.imageView.height
-                val width = viewBinding.imageView.width
-                val bm = Bitmap.createScaledBitmap(img, width, height, true)
-                viewBinding.imageView.setImageBitmap(bm)
-            }
-        }
-    }
-
     companion object {
-        const val CAPTURE_IMAGE_REQUEST_CODE = 1
+        const val CARD_EXTRA = "se.lth.solid.vilmer.project3.CARD_EXTRA"
+        const val POSITION_EXTRA = "se.lth.solid.vilmer.project3.POSITION_EXTRA"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 }

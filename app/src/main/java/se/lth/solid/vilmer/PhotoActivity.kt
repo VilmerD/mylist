@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Surface.ROTATION_0
 import android.view.Surface.ROTATION_90
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -143,29 +145,35 @@ class PhotoActivity : AppCompatActivity() {
 
     fun postProcess(imageFile: File) {
         var bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-        val width = bitmap.width
-        val height = bitmap.height
+        var width = bitmap.width
+        var height = bitmap.height
 
-        // Rotate and crop bitmap
-        val croppedWidth = if (width < height) width else 4*height/3
-        val croppedHeight = if (width < height) 3*width/4 else height
-
+        // Rotate
         var rotatedBitmap: Bitmap?
         val rotation = getExifRotation(imageFile)
         val frame = Matrix()
         if (rotation != 0 && bitmap != null) {
             frame.postRotate(rotation.toFloat())
             rotatedBitmap = Bitmap.createBitmap(
-                bitmap, 0, 0, croppedWidth, croppedHeight,
+                bitmap, 0, 0, width, height,
                 frame, true
             )
             bitmap = null
         } else {
-            rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, croppedWidth, croppedHeight)
+            rotatedBitmap = bitmap
         }
 
+        // Cropping
+        width = rotatedBitmap.width
+        height = rotatedBitmap.height
+        val croppedWidth = if (width < height) width else 4*height/3
+        val croppedHeight = if (width < height) 3*width/4 else height
+        val x = (width - croppedWidth)/2
+        val y = (height - croppedHeight)/2
+        val croppedBitmap = Bitmap.createBitmap(rotatedBitmap, x, y, croppedWidth, croppedHeight)
+
         // Scaling bitmap
-        val scaledBitmap = Bitmap.createScaledBitmap(rotatedBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true)
+        val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true)
         rotatedBitmap = null
 
         // Save image as jpeg again
@@ -214,7 +222,7 @@ class PhotoActivity : AppCompatActivity() {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         const val FILE = "se.lth.solid.vilmer.Project3.FileExtra"
 
-        const val IMAGE_WIDTH = 720
-        const val IMAGE_HEIGHT = 540
+        const val IMAGE_WIDTH = 360
+        const val IMAGE_HEIGHT = 270
     }
 }
