@@ -6,13 +6,12 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.os.Build
+import android.media.Image
 import android.os.Bundle
 import android.util.Log
-import android.view.Display
-import android.view.Surface
+import android.view.Surface.ROTATION_0
+import android.view.Surface.ROTATION_90
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -22,9 +21,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.exifinterface.media.ExifInterface
 import se.lth.solid.vilmer.databinding.ActivityPhotoBinding
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
 import java.io.IOException
-import java.nio.ByteBuffer
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -93,8 +92,7 @@ class PhotoActivity : AppCompatActivity() {
         // been taken
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), object: ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                val data = Intent()
-                data.putExtra(FILE, file)
+                postProcess(file)
                 setResult(RESULT_OK)
                 finish()
             }
@@ -113,13 +111,15 @@ class PhotoActivity : AppCompatActivity() {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
-            val preview = Preview.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .build()
                 .also {
                     it.setSurfaceProvider(viewBinding.preview.surfaceProvider)
                 }
 
-            imageCapture = ImageCapture.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            imageCapture = ImageCapture.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .build()
 
             // Select back camera as a default
@@ -141,6 +141,65 @@ class PhotoActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    fun postProcess(imageFile: File) {
+        var bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+        val width = bitmap.width
+        val height = bitmap.height
+
+        // Rotate and crop bitmap
+        val croppedWidth = if (width < height) width else 4*height/3
+        val croppedHeight = if (width < height) 3*width/4 else height
+
+        var rotatedBitmap: Bitmap?
+        val rotation = getExifRotation(imageFile)
+        val frame = Matrix()
+        if (rotation != 0 && bitmap != null) {
+            frame.postRotate(rotation.toFloat())
+            rotatedBitmap = Bitmap.createBitmap(
+                bitmap, 0, 0, croppedWidth, croppedHeight,
+                frame, true
+            )
+            bitmap = null
+        } else {
+            rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, croppedWidth, croppedHeight)
+        }
+
+        // Scaling bitmap
+        val scaledBitmap = Bitmap.createScaledBitmap(rotatedBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true)
+        rotatedBitmap = null
+
+        // Save image as jpeg again
+        val fops: FileOutputStream?
+        try {
+            fops = FileOutputStream(imageFile)
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fops)
+
+            fops.flush()
+            fops.close()
+        } catch (e: FileNotFoundException) {
+
+        } catch (e: Exception) {
+
+        }
+
+    }
+
+    private fun getExifRotation(imageFile: File): Int {
+        return try {
+            val exif = ExifInterface(imageFile)
+            when (exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_UNDEFINED
+            )) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> 270
+                else -> 0
+            }
+        } catch (e: IOException) {
+            0
+        }
+    }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
@@ -148,43 +207,14 @@ class PhotoActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+
     companion object {
         private const val TAG = "AddCardFragment"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         const val FILE = "se.lth.solid.vilmer.Project3.FileExtra"
 
-        fun makeBitmap(imageFile: File) : Bitmap {
-            var bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-            val rotatedBitmap: Bitmap?
-            val rotation = getExifRotation(imageFile)
-            val frame = Matrix()
-            if (rotation != 0 && bitmap != null) {
-                frame.postRotate(rotation.toFloat())
-                rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height,
-                    frame, true)
-                bitmap = null
-            } else {
-                rotatedBitmap = bitmap
-            }
-            return rotatedBitmap
-        }
-
-        private fun getExifRotation(imageFile: File): Int {
-            return try {
-                val exif = ExifInterface(imageFile)
-                when (exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED
-                )) {
-                    ExifInterface.ORIENTATION_ROTATE_90 -> 90
-                    ExifInterface.ORIENTATION_ROTATE_180 -> 180
-                    ExifInterface.ORIENTATION_ROTATE_270 -> 270
-                    else -> 0
-                }
-            } catch (e: IOException) {
-                0
-            }
-        }
+        const val IMAGE_WIDTH = 720
+        const val IMAGE_HEIGHT = 540
     }
 }

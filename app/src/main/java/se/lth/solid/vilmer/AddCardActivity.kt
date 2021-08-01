@@ -2,6 +2,7 @@ package se.lth.solid.vilmer
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -76,7 +77,7 @@ class AddCardActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                val img = PhotoActivity.makeBitmap(file!!)
+                val img = BitmapFactory.decodeFile(file!!.absolutePath)
                 val height = viewBinding.imageView.height
                 val width = viewBinding.imageView.width
                 val bm = Bitmap.createScaledBitmap(img, width, height, true)

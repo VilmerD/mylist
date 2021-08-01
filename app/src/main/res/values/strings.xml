@@ -5,6 +5,8 @@
     <string name="name_hint">Name</string>
     <string name="addCardMenu">Add Card</string>
     <string name="backbutton">Back</string>
-    <string name="okbutton">Ok</string>
+    <string name="ok_button_title">Ok</string>
     <string name="capture_button_text">Take Photo</string>
+    <string name="search_button_title">Search</string>
+    <string name="filter_button_title">Filter</string>
 </resources>

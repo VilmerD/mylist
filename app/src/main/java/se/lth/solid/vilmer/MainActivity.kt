@@ -3,10 +3,16 @@ package se.lth.solid.vilmer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.*
 import se.lth.solid.vilmer.databinding.ActivityMainBinding
 import java.io.File
 import java.io.FileNotFoundException
@@ -33,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         val mRecyclerView: RecyclerView = viewBinding.cardRecycler
         mRecyclerView.setHasFixedSize(true)
-        mRecyclerView.layoutManager = LinearLayoutManager(this)
+        mRecyclerView.layoutManager = GridLayoutManager(this, 2)
 
         mAdapter = CardAdapter(myLists[0])
         mRecyclerView.adapter = mAdapter
@@ -42,6 +48,35 @@ class MainActivity : AppCompatActivity() {
         addCardButton.setOnClickListener {
             val i = Intent(this, AddCardActivity::class.java)
             startActivityForResult(i, 0)
+        }
+
+        viewBinding.bottomAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.search -> {
+                    true
+                }
+                R.id.filter -> {
+                    true
+                }
+                else -> false
+            }
+        }
+        viewBinding.bottomAppBar.setNavigationOnClickListener {
+
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                val name = data?.getStringExtra(NAME_EXTRA)
+                val path = data?.getSerializableExtra(PATH_EXTRA) as File
+                val newCard = CardDataModel(path, name!!, null)
+                mAdapter.cardList.cards.add(newCard)
+                mAdapter.notifyDataSetChanged()
+            }
         }
     }
 
@@ -71,19 +106,6 @@ class MainActivity : AppCompatActivity() {
             oos.close()
         } catch (e: FileNotFoundException) {
             print(e.stackTrace)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                val name = data?.getStringExtra(NAME_EXTRA)
-                val path = data?.getSerializableExtra(PATH_EXTRA) as File
-                val newCard = CardDataModel(path, name!!, null)
-                myLists[0].cards.add(newCard)
-                mAdapter.notifyDataSetChanged()
-            }
         }
     }
 }
