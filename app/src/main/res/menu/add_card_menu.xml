@@ -5,7 +5,7 @@
     <item
         android:title="@string/ok_button_title"
         android:id="@+id/done"
-        android:icon="@drawable/baseline_done_24"
+        android:icon="@drawable/ic_baseline_done_24"
         app:showAsAction="always">
     </item>
 

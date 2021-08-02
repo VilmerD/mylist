@@ -1,18 +1,12 @@
 package se.lth.solid.vilmer
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
-import android.view.Surface.ROTATION_0
-import android.view.Surface.ROTATION_90
-import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -222,7 +216,7 @@ class PhotoActivity : AppCompatActivity() {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         const val FILE = "se.lth.solid.vilmer.Project3.FileExtra"
 
-        const val IMAGE_WIDTH = 360
-        const val IMAGE_HEIGHT = 270
+        const val IMAGE_WIDTH = 540
+        const val IMAGE_HEIGHT = 540*3/4
     }
 }

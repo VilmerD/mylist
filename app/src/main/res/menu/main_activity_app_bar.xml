@@ -4,7 +4,7 @@
     <item
         android:title="@string/search_button_title"
         android:id="@+id/search"
-        android:icon="@drawable/baseline_search_24"
+        android:icon="@drawable/ic_baseline_search_24"
         app:showAsAction="always">
 
     </item>
@@ -12,7 +12,7 @@
     <item
         android:title="@string/filter_button_title"
         android:id="@+id/filter"
-        android:icon="@drawable/baseline_filter_list_24"
+        android:icon="@drawable/ic_baseline_filter_24"
         app:showAsAction="always">
 
     </item>

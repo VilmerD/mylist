@@ -16,22 +16,43 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <!-- Text -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
 
             <!-- Name -->
             <TextView
                 android:id="@+id/nameTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+
+                android:layout_marginStart="8dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/editCardButton"
+                android:textSize="20sp">
 
             </TextView>
-        </LinearLayout>
+
+            <Button
+                android:id="@+id/editCardButton"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+
+                android:layout_alignParentEnd="true"
+
+                android:background="?android:attr/selectableItemBackground"
+                app:icon="@drawable/ic_baseline_edit_24"
+                app:iconGravity="top"
+                app:iconSize="24dp"
+                app:iconTint="@color/black">
+
+            </Button>
+        </RelativeLayout>
+
         <!-- Media -->
         <ImageView
             android:id="@+id/imageView"
@@ -41,12 +62,10 @@
 
         </ImageView>
 
-
         <!-- Buttons -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
             android:orientation="horizontal">
 
             <TextView
@@ -62,21 +81,22 @@
 
             </TextView>
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/iterButton"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
 
-                android:layout_margin="8dp"
                 android:background="?android:attr/selectableItemBackground"
-                app:icon="@drawable/baseline_add_24"
+                app:icon="@drawable/ic_baseline_add_24"
                 app:iconGravity="top"
                 app:iconSize="24dp"
-
                 app:iconTint="@color/black"
-                app:layout_constraintStart_toEndOf="@id/countsView">
 
-            </com.google.android.material.button.MaterialButton>
+                app:layout_constraintBottom_toBottomOf="@id/countsView"
+                app:layout_constraintStart_toEndOf="@id/countsView"
+                app:layout_constraintTop_toTopOf="@id/countsView">
+
+            </Button>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

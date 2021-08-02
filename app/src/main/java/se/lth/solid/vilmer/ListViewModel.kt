@@ -1,6 +1,5 @@
 package se.lth.solid.vilmer
 
-import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 

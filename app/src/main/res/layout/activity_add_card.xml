@@ -19,6 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintDimensionRatio="4:3"
+
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -43,10 +44,10 @@
             android:elevation="8dp">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/nameEditText"
+                android:id="@+id/cardNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/name_hint">
+                android:hint="@string/card_name_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"

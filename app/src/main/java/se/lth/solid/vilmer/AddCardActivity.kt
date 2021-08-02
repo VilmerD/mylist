@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import se.lth.solid.vilmer.databinding.ActivityAddCardBinding
 import java.io.File
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,7 +19,7 @@ class AddCardActivity : AppCompatActivity() {
 
     private lateinit var viewBinding: ActivityAddCardBinding
 
-    lateinit var card: CardDataModel
+    private lateinit var card: CardDataModel
     var position: Int = 0
 
     private val startForResult = registerForActivityResult(
@@ -41,7 +40,11 @@ class AddCardActivity : AppCompatActivity() {
 
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_add_card)
 
-        viewBinding.imageView.setImageBitmap(null)
+        val img = BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
+        viewBinding.imageView.setImageBitmap(img)
+
+        val name = card.name
+        if (name != "") viewBinding.cardNameEditText.editText?.setText(name)
 
         viewBinding.photoButton.setOnClickListener {
             takePicture()
@@ -79,8 +82,10 @@ class AddCardActivity : AppCompatActivity() {
                 true
             }
             R.id.done -> {
-                card.name = viewBinding.nameEditText.editText?.text.toString()
-                val data = Intent().putExtra(CARD_EXTRA, card)
+                card.name = viewBinding.cardNameEditText.editText?.text.toString()
+                val data = Intent()
+                    .putExtra(CARD_EXTRA, card)
+                    .putExtra(POSITION_EXTRA, position)
                 setResult(RESULT_OK, data)
                 finish()
                 true

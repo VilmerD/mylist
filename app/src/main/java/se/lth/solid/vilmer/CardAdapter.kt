@@ -1,5 +1,6 @@
 package se.lth.solid.vilmer
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +8,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 
-class CardAdapter(var cardList: CardList) : RecyclerView.Adapter<CardAdapter.CardHolder>() {
+class CardAdapter(var cardList: CardList,
+var launcher: ActivityResultLauncher<Intent>) : RecyclerView.Adapter<CardAdapter.CardHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardHolder {
         val card = LayoutInflater.from(parent.context).inflate(R.layout.card_view, parent, false)
@@ -27,8 +30,15 @@ class CardAdapter(var cardList: CardList) : RecyclerView.Adapter<CardAdapter.Car
 
         holder.iterButton.text = "$counts"
         holder.iterButton.setOnClickListener {
-            val counts = card.iterateCounts()
-            holder.iterButton.text = "$counts"
+            val cnts = card.iterateCounts()
+            holder.iterButton.text = "$cnts"
+        }
+
+        holder.editButton.setOnClickListener {
+            val data = Intent(it.context, AddCardActivity::class.java)
+                .putExtra(AddCardActivity.CARD_EXTRA, card)
+                .putExtra(AddCardActivity.POSITION_EXTRA, holder.adapterPosition)
+            launcher.launch(data)
         }
     }
 
@@ -40,5 +50,6 @@ class CardAdapter(var cardList: CardList) : RecyclerView.Adapter<CardAdapter.Car
         var imageView: ImageView = itemView.findViewById(R.id.imageView)
         var nameView: TextView = itemView.findViewById(R.id.nameTextView)
         var iterButton: Button = itemView.findViewById(R.id.iterButton)
+        var editButton: Button = itemView.findViewById(R.id.editCardButton)
     }
 }

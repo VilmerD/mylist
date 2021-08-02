@@ -3,20 +3,14 @@ package se.lth.solid.vilmer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.Window
+import android.view.View
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
 import se.lth.solid.vilmer.databinding.ActivityMainBinding
-import java.io.File
 import java.io.FileNotFoundException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -29,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mAdapter: CardAdapter
 
     private var startAddCardActivity = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.resultCode == RESULT_OK) {
             val card = result.data?.getSerializableExtra(AddCardActivity.CARD_EXTRA) as CardDataModel
@@ -38,13 +32,37 @@ class MainActivity : AppCompatActivity() {
                 AddCardActivity.POSITION_EXTRA,
                 defaultPosition
             )!!
-            mAdapter.cardList.cards.add(position, card)
+            if (position == mAdapter.cardList.cards.size) {
+                mAdapter.cardList.cards.add(card)
+            } else {
+                mAdapter.cardList.cards[position] = card
+            }
             mAdapter.notifyDataSetChanged()
         }
     }
 
-    companion object {
-        const val saveFileName = "myLists.sr1"
+    private var startManageListsActivity = registerForActivityResult(
+        StartActivityForResult()
+    ) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            // Update names of lists
+            val lists = result.data?.getStringArrayExtra(NEW_LISTS_EXTRA)!!
+            for (i in 1..myLists.lastIndex) {
+                myLists[i].name = lists[i]
+            }
+
+            // If a new list was created, add it to the lists and set adapter to that list or chosen
+            // position given by intent
+            if (lists.size > myLists.size) {
+                val newCardList = CardList(lists.last(), arrayListOf())
+                myLists.add(newCardList)
+                mAdapter.cardList = newCardList
+            } else {
+                val position = result.data?.getIntExtra(DISPLAY_LIST_EXTRA, -1)!!
+                mAdapter.cardList = myLists[position]
+            }
+            mAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        mAdapter = CardAdapter(myLists[0])
+        mAdapter = CardAdapter(myLists[0], startAddCardActivity)
         mRecyclerView.adapter = mAdapter
 
         val addCardButton = viewBinding.addCardButton
@@ -79,8 +97,11 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-        viewBinding.bottomAppBar.setNavigationOnClickListener {
+        viewBinding.bottomAppBar.setNavigationOnClickListener { _: View ->
+            val data = Intent(this, ManageListsActivity::class.java)
+            data.putExtra(ManageListsActivity.LISTS_EXTRA, Array(myLists.size) { myLists[it].name })
 
+            startManageListsActivity.launch(data)
         }
     }
 
@@ -111,5 +132,11 @@ class MainActivity : AppCompatActivity() {
         } catch (e: FileNotFoundException) {
             print(e.stackTrace)
         }
+    }
+
+    companion object {
+        const val saveFileName = "myLists.sr1"
+        const val NEW_LISTS_EXTRA = "se.lth.solid.vilmer.NEW_LISTS_EXTRA"
+        const val DISPLAY_LIST_EXTRA = "se.lth.solid.vilmer.DISPLAY_LIST_EXTRA"
     }
 }
