@@ -26,6 +26,41 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tagsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:hint="@string/tags_hint"
+
+            app:layout_constraintTop_toBottomOf="@id/listNameEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            android:layout_margin="8dp"
+
+            app:endIconDrawable="@drawable/ic_baseline_add_24"
+            app:endIconMode="custom">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.google.android.material.textfield.TextInputEditText>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/tagChipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintTop_toBottomOf="@id/tagsEditText"
+            app:layout_constraintStart_toStartOf="parent"
+
+            android:layout_margin="8dp">
+
+        </com.google.android.material.chip.ChipGroup>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -1,14 +1,16 @@
 package se.lth.solid.vilmer
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.chip.Chip
 import se.lth.solid.vilmer.databinding.ActivityAddCardBinding
 import java.io.File
 import java.text.SimpleDateFormat
@@ -22,6 +24,8 @@ class AddCardActivity : AppCompatActivity() {
     private lateinit var card: CardDataModel
     var position: Int = 0
 
+    private lateinit var tagChoices: ArrayList<String>
+
     private val startForResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
@@ -33,21 +37,54 @@ class AddCardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         card = intent!!.getSerializableExtra(CARD_EXTRA) as CardDataModel
         position = intent!!.getIntExtra(POSITION_EXTRA, 0)
+        tagChoices = intent!!.getSerializableExtra(TAG_CHOICES_EXTRA) as ArrayList<String>
 
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_add_card)
-
         val img = BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
         viewBinding.imageView.setImageBitmap(img)
+
+        viewBinding.photoButton.setOnClickListener {
+            takePicture()
+        }
 
         val name = card.name
         if (name != "") viewBinding.cardNameEditText.editText?.setText(name)
 
-        viewBinding.photoButton.setOnClickListener {
-            takePicture()
+        tagChoices.forEach { addChip(it) }
+        viewBinding.tagChipGroup.forEach { view ->
+            val chip = view as Chip
+            card.tags.forEach { s ->
+                if (chip.text == s) chip.isChecked = true
+            }
+        }
+
+        viewBinding.topAppBar.setNavigationOnClickListener {
+            setResult(RESULT_CANCELED)
+            finish()
+        }
+
+        viewBinding.topAppBar.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                android.R.id.home -> {
+                    setResult(RESULT_CANCELED)
+                    finish()
+                    true
+                }
+                R.id.done -> {
+                    card.name = viewBinding.cardNameEditText.editText?.text.toString()
+                    card.tags = getTags()
+                    val data = Intent()
+                        .putExtra(CARD_EXTRA, card)
+                        .putExtra(POSITION_EXTRA, position)
+                    setResult(RESULT_OK, data)
+                    finish()
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -67,38 +104,32 @@ class AddCardActivity : AppCompatActivity() {
         startForResult.launch(i)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.add_card_menu, menu)
-        return true
+    private fun addChip(name: String) {
+        val chip = Chip(this)
+        chip.text = name
+
+        chip.isClickable = true
+        chip.isCheckable = true
+
+        val index = viewBinding.tagChipGroup.childCount - 1
+        viewBinding.tagChipGroup.addView(chip as View, index)
     }
 
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                setResult(RESULT_CANCELED)
-                finish()
-                true
-            }
-            R.id.done -> {
-                card.name = viewBinding.cardNameEditText.editText?.text.toString()
-                val data = Intent()
-                    .putExtra(CARD_EXTRA, card)
-                    .putExtra(POSITION_EXTRA, position)
-                setResult(RESULT_OK, data)
-                finish()
-                true
-            }
-            else -> {
-                false
-            }
-        }
+    private fun getTags() : ArrayList<String> {
+        val chipGroup = viewBinding.tagChipGroup
+        val selectedTags : ArrayList<String> = arrayListOf()
+        chipGroup.children
+            .toList()
+            .filter { (it as Chip).isChecked }
+            .forEach { selectedTags.add((it as Chip).text.toString()) }
+        return selectedTags
     }
 
     companion object {
         const val CARD_EXTRA = "se.lth.solid.vilmer.project3.CARD_EXTRA"
         const val POSITION_EXTRA = "se.lth.solid.vilmer.project3.POSITION_EXTRA"
+        const val TAG_CHOICES_EXTRA = "se.lth.solid.vilmer.project3.TAGS_EXTRA"
+
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 }

@@ -19,6 +19,7 @@ class ManageListsActivity : AppCompatActivity() {
     private lateinit var mAdapter: MyListAdapter
 
     private lateinit var lists: Array<String>
+    private lateinit var listTags: ArrayList<ArrayList<String>>
 
     private var showMenu = false
 
@@ -27,16 +28,23 @@ class ManageListsActivity : AppCompatActivity() {
             if (result.resultCode == RESULT_OK) {
                 val newListName = result.data?.getStringExtra(LIST_NAME_EXTRA)!!
                 val position = result.data?.getIntExtra(LIST_SELECTED_EXTRA, -1)!!
+                val tags = result.data?.getStringArrayListExtra(TAGS_EXTRA)!!
                 when (position) {
                     -1 -> throw IndexOutOfBoundsException()
                     lists.size -> {
                         lists = Array(lists.size + 1) {
                             if (it < lists.size) lists[it] else newListName
                         }
+                        listTags.add(tags)
                     }
-                    else -> lists[position] = newListName
+                    else -> {
+                        lists[position] = newListName
+                        listTags[position] = tags
+                    }
                 }
+                // Do i need to do this? Doesn't the adapter have a reference to the updated object?
                 mAdapter.lists = lists
+                mAdapter.listTags = listTags
                 mAdapter.notifyDataSetChanged()
             }
         }
@@ -48,17 +56,19 @@ class ManageListsActivity : AppCompatActivity() {
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_manage_lists)
 
         val extra = intent!!
-        lists = extra.getStringArrayExtra((LISTS_EXTRA)) as Array<String>
+        lists = extra.getStringArrayExtra(LISTS_EXTRA) as Array<String>
+        var arrayTags: Array<ArrayList<String>>? = extra.getSerializableExtra(TAGS_EXTRA) as Array<ArrayList<String>>
+        listTags = ArrayList(arrayTags!!.asList())
+        arrayTags = null
 
         val mRecyclerView = viewBinding.listRecycler
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = LinearLayoutManager(this)
+        mAdapter = MyListAdapter(lists, listTags,this)
+        mRecyclerView.adapter = mAdapter
 
         val divider = DividerItemDecoration(this, LinearLayoutManager.VERTICAL)
         mRecyclerView.addItemDecoration(divider)
-
-        mAdapter = MyListAdapter(lists, this)
-        mRecyclerView.adapter = mAdapter
     }
 
     fun toggleMenu() {
@@ -78,5 +88,6 @@ class ManageListsActivity : AppCompatActivity() {
         const val LIST_NAME_EXTRA = "se.lth.solid.vilmer.LIST_NAME_EXTRA"
         const val LIST_SELECTED_EXTRA = "se.lth.solid.vilmer.LIST_SELECTED_EXTRA"
         const val LISTS_EXTRA = "se.lth.solid.vilmer.LISTS_EXTRA"
+        const val TAGS_EXTRA = "se.lth.solid.vilmer.TAGS_EXTRA"
     }
 }

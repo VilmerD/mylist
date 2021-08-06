@@ -17,41 +17,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Text -->
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        <!-- Name -->
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
 
-            <!-- Name -->
-            <TextView
-                android:id="@+id/nameTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
+            android:layout_margin="8dp"
+            android:textSize="20sp">
 
-                android:layout_marginStart="8dp"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/editCardButton"
-                android:textSize="20sp">
-
-            </TextView>
-
-            <Button
-                android:id="@+id/editCardButton"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-
-                android:layout_alignParentEnd="true"
-
-                android:background="?android:attr/selectableItemBackground"
-                app:icon="@drawable/ic_baseline_edit_24"
-                app:iconGravity="top"
-                app:iconSize="24dp"
-                app:iconTint="@color/black">
-
-            </Button>
-        </RelativeLayout>
+        </TextView>
 
         <!-- Media -->
         <ImageView
@@ -62,43 +37,26 @@
 
         </ImageView>
 
-        <!-- Buttons -->
+        <!--Extra-->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp">
 
-            <TextView
-                android:id="@+id/countsView"
-                android:layout_width="wrap_content"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/tagChipGroup"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Counts:"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
 
-            </TextView>
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-            <Button
-                android:id="@+id/iterButton"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+            </com.google.android.material.chip.ChipGroup>
 
-                android:background="?android:attr/selectableItemBackground"
-                app:icon="@drawable/ic_baseline_add_24"
-                app:iconGravity="top"
-                app:iconSize="24dp"
-                app:iconTint="@color/black"
-
-                app:layout_constraintBottom_toBottomOf="@id/countsView"
-                app:layout_constraintStart_toEndOf="@id/countsView"
-                app:layout_constraintTop_toTopOf="@id/countsView">
-
-            </Button>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </LinearLayout>
 

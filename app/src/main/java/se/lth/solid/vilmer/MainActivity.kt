@@ -3,6 +3,7 @@ package se.lth.solid.vilmer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -26,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.resultCode == RESULT_OK) {
-            val card = result.data?.getSerializableExtra(AddCardActivity.CARD_EXTRA) as CardDataModel
+            val card =
+                result.data?.getSerializableExtra(AddCardActivity.CARD_EXTRA) as CardDataModel
             val defaultPosition = mAdapter.cardList.cards.size
             val position = result.data?.getIntExtra(
                 AddCardActivity.POSITION_EXTRA,
@@ -47,14 +49,17 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             // Update names of lists
             val lists = result.data?.getStringArrayExtra(NEW_LISTS_EXTRA)!!
-            for (i in 1..myLists.lastIndex) {
+            val tags =
+                result.data?.getSerializableExtra(NEW_TAGS_EXTRA)!! as ArrayList<ArrayList<String>>
+            for (i in 0..myLists.lastIndex) {
                 myLists[i].name = lists[i]
+                myLists[i].tags = tags[i]
             }
 
             // If a new list was created, add it to the lists and set adapter to that list or chosen
-            // position given by intent
+            // list
             if (lists.size > myLists.size) {
-                val newCardList = CardList(lists.last(), arrayListOf())
+                val newCardList = CardList(lists.last(), arrayListOf(), tags.last())
                 myLists.add(newCardList)
                 mAdapter.cardList = newCardList
             } else {
@@ -67,27 +72,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        readLists()
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        readLists()
 
         val mRecyclerView: RecyclerView = viewBinding.cardRecycler
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        mAdapter = CardAdapter(myLists[0], startAddCardActivity)
+        mAdapter = CardAdapter(myLists[0], startAddCardActivity, this)
         mRecyclerView.adapter = mAdapter
 
         val addCardButton = viewBinding.addCardButton
         addCardButton.setOnClickListener {
             val i = Intent(this, AddCardActivity::class.java)
-            val newCard = CardDataModel(null, "", null)
+            val newCard = CardDataModel(null, "", arrayListOf())
             i.putExtra(AddCardActivity.CARD_EXTRA, newCard)
             i.putExtra(AddCardActivity.POSITION_EXTRA, mAdapter.cardList.cards.size)
+            i.putExtra(AddCardActivity.TAG_CHOICES_EXTRA, mAdapter.cardList.tags)
+
             startAddCardActivity.launch(i)
         }
 
-        viewBinding.bottomAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
+        viewBinding.topAppBar.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
                 R.id.search -> {
                     true
                 }
@@ -97,9 +104,11 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-        viewBinding.bottomAppBar.setNavigationOnClickListener { _: View ->
+
+        viewBinding.topAppBar.setNavigationOnClickListener { _ ->
             val data = Intent(this, ManageListsActivity::class.java)
             data.putExtra(ManageListsActivity.LISTS_EXTRA, Array(myLists.size) { myLists[it].name })
+            data.putExtra(ManageListsActivity.TAGS_EXTRA, Array(myLists.size) { myLists[it].tags })
 
             startManageListsActivity.launch(data)
         }
@@ -116,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             myLists = ois.readObject() as ArrayList<CardList>
             ois.close()
         } catch (e: FileNotFoundException) {
-            val firstList = CardList("My List", arrayListOf())
+            val firstList = CardList("My List", arrayListOf(), arrayListOf())
             myLists = arrayListOf(firstList)
             writeLists()
         }
@@ -135,8 +144,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val NEW_LISTS_EXTRA = "se.lth.solid.vilmer.project3.NEW_LISTS_EXTRA"
+        const val DISPLAY_LIST_EXTRA = "se.lth.solid.vilmer.project3.DISPLAY_LIST_EXTRA"
+        const val NEW_TAGS_EXTRA = "se.lth.solid.vilmer.project3.NEW_TAGS_EXTRA"
+
         const val saveFileName = "myLists.sr1"
-        const val NEW_LISTS_EXTRA = "se.lth.solid.vilmer.NEW_LISTS_EXTRA"
-        const val DISPLAY_LIST_EXTRA = "se.lth.solid.vilmer.DISPLAY_LIST_EXTRA"
     }
 }

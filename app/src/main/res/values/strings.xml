@@ -16,4 +16,6 @@
     <string name="new_list_text">Add New List</string>
     <string name="delete_button">Delete</string>
     <string name="edit_button">Edit</string>
+    <string name="tags_hint">Tags</string>
+    <string name="add_card_title">Card Editor</string>
 </resources>
