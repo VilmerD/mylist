@@ -2,4 +2,47 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation" />
+    android:id="@+id/navigation"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="se.lth.solid.vilmer.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_manageListsFragment"
+            app:destination="@id/manageListsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_addCardFragment"
+            app:destination="@id/addCardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageListsFragment"
+        android:name="se.lth.solid.vilmer.ManageListsFragment"
+        android:label="ManageListsFragment"
+        tools:layout="@layout/fragment_manage_lists">
+        <action
+            android:id="@+id/action_manageListsFragment_to_addListFragment"
+            app:destination="@id/addListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addListFragment"
+        android:name="se.lth.solid.vilmer.AddListFragment"
+        android:label="AddListFragment"
+        tools:layout="@layout/fragment_add_list">
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCardFragment"
+        android:name="se.lth.solid.vilmer.AddCardFragment"
+        android:label="AddCardFragment"
+        tools:layout="@layout/fragment_add_card">
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+</navigation>

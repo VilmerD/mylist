@@ -152,7 +152,6 @@ class PhotoActivity : AppCompatActivity() {
                 bitmap, 0, 0, width, height,
                 frame, true
             )
-            bitmap = null
         } else {
             rotatedBitmap = bitmap
         }
@@ -168,7 +167,6 @@ class PhotoActivity : AppCompatActivity() {
 
         // Scaling bitmap
         val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true)
-        rotatedBitmap = null
 
         // Save image as jpeg again
         val fops: FileOutputStream?

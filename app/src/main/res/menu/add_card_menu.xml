@@ -6,7 +6,16 @@
         android:title="@string/ok_button_title"
         android:id="@+id/done"
         android:icon="@drawable/ic_baseline_done_24"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom">
+
+    </item>
+
+    <item
+        android:title="@string/delete_button"
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_baseline_delete_24"
+        app:showAsAction="ifRoom">
+
     </item>
 
 </menu>

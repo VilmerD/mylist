@@ -1,72 +1,66 @@
 package se.lth.solid.vilmer
 
 import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 
 class MyListAdapter(
-    var lists: Array<String>,
-    var listTags: ArrayList<ArrayList<String>>,
-    var context: Context
-) :
-    RecyclerView.Adapter<MyListAdapter.ListHolder>() {
+    var lists: ListsViewModel
+) : RecyclerView.Adapter<MyListAdapter.ListHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListHolder {
         val item =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_view, parent, false)
 
-        return ListHolder(item, (context as ManageListsActivity).launcher)
+        return ListHolder(item)
     }
 
     override fun onBindViewHolder(holder: ListHolder, position: Int) {
-        if (position == lists.size) {
-            holder.nameView.text = context.resources.getString(R.string.new_list_text)
-            holder.tags = arrayListOf()
-        } else {
-            holder.nameView.isClickable = true
-            holder.nameView.text = lists[position]
-            holder.tags = listTags[position]
+        val context = holder.itemView.context
+        holder.nameView.isClickable = true
+        holder.nameView.text = lists.myLists[position].name
+        holder.tags = lists.myLists[position].tags
 
-            // onClick is used to select the current list as displaying list
-            holder.nameView.setOnClickListener {
-                val data = Intent()
-                    .putExtra(MainActivity.DISPLAY_LIST_EXTRA, holder.adapterPosition)
-                    .putExtra(MainActivity.NEW_LISTS_EXTRA, lists)
-                    .putExtra(MainActivity.NEW_TAGS_EXTRA, listTags)
-                (context as Activity).setResult(RESULT_OK, data)
-                (context as Activity).finish()
-            }
+        // onClick is used to select the current list as displaying list
+        holder.nameView.setOnClickListener {
+            lists.displaying = holder.adapterPosition
+            (context as Activity).onBackPressed()
         }
 
-        holder.editButton.setOnClickListener(holder)
+        holder.editButton.setOnClickListener { view: View ->
+            val pos = holder.adapterPosition
+            val action =
+                ManageListsFragmentDirections.actionManageListsFragmentToAddListFragment(pos)
+            view.findNavController().navigate(action)
+        }
+
+        holder.tagChipGroup.removeAllViews()
+        holder.tags.forEach {
+            val chip = Chip(holder.itemView.context)
+            chip.text = it
+            chip.isClickable = false
+            chip.isCheckable = false
+
+            holder.tagChipGroup.addView(chip as View)
+        }
     }
 
     override fun getItemCount(): Int {
-        return lists.size + 1
+        return lists.size()
     }
 
-    class ListHolder(itemView: View, var launcher: ActivityResultLauncher<Intent>) :
-        RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ListHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
         var nameView: TextView = itemView.findViewById(R.id.list_name)
         var editButton: Button = itemView.findViewById(R.id.editListButton)
+        var tagChipGroup: ChipGroup = itemView.findViewById(R.id.tagChipGroup)
         lateinit var tags: ArrayList<String>
-
-        // onClick used when editing this list item
-        override fun onClick(v: View) {
-            val data = Intent(v.context, AddListActivity::class.java)
-                .putExtra(AddListActivity.NAME_EXTRA, nameView.text)
-                .putExtra(AddListActivity.LIST_SELECTED_EXTRA, adapterPosition)
-                .putExtra(AddListActivity.TAGS_EXTRA, tags)
-            launcher.launch(data)
-        }
     }
 }
-
-
