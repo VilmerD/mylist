@@ -63,7 +63,6 @@ class MainFragment : Fragment() {
         }
 
         viewBinding.topAppBar.title = lists.getListName()
-
         return viewBinding.root
     }
 

@@ -35,14 +35,14 @@
         tools:layout="@layout/fragment_add_list">
         <argument
             android:name="position"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/filterFragment"
         android:name="se.lth.solid.vilmer.FilterFragment"
         android:label="FilterFragment"
-        tools:layout="@layout/fragment_filter"/>
+        tools:layout="@layout/fragment_filter" />
     <fragment
         android:id="@+id/addCardFragment"
         android:name="se.lth.solid.vilmer.AddCardFragment"
@@ -50,7 +50,7 @@
         tools:layout="@layout/fragment_add_card">
         <argument
             android:name="position"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
 </navigation>
