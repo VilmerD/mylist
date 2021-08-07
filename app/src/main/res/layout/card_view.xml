@@ -38,7 +38,7 @@
         </ImageView>
 
         <!--Extra-->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -46,16 +46,13 @@
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/tagChipGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
             </com.google.android.material.chip.ChipGroup>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </HorizontalScrollView>
 
 
     </LinearLayout>

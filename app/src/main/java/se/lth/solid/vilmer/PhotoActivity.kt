@@ -17,7 +17,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.exifinterface.media.ExifInterface
 import se.lth.solid.vilmer.databinding.ActivityPhotoBinding
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.concurrent.ExecutorService
@@ -80,7 +79,7 @@ class PhotoActivity : AppCompatActivity() {
         val imageCapture = imageCapture ?: return
 
         //Get storage location from intent
-        val file = intent.getSerializableExtra(FILE) as File
+        val file = intent.getSerializableExtra(FILE_EXTRA) as File
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
 
@@ -152,7 +151,6 @@ class PhotoActivity : AppCompatActivity() {
                 bitmap, 0, 0, width, height,
                 frame, true
             )
-            bitmap = null
         } else {
             rotatedBitmap = bitmap
         }
@@ -168,7 +166,6 @@ class PhotoActivity : AppCompatActivity() {
 
         // Scaling bitmap
         val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true)
-        rotatedBitmap = null
 
         // Save image as jpeg again
         val fops: FileOutputStream?
@@ -178,12 +175,8 @@ class PhotoActivity : AppCompatActivity() {
 
             fops.flush()
             fops.close()
-        } catch (e: FileNotFoundException) {
-
         } catch (e: Exception) {
-
         }
-
     }
 
     private fun getExifRotation(imageFile: File): Int {
@@ -214,7 +207,7 @@ class PhotoActivity : AppCompatActivity() {
         private const val TAG = "AddCardFragment"
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-        const val FILE = "se.lth.solid.vilmer.Project3.FileExtra"
+        const val FILE_EXTRA = "se.lth.solid.vilmer.Project3.FILE_EXTRA"
 
         const val IMAGE_WIDTH = 540
         const val IMAGE_HEIGHT = 540*3/4

@@ -1,23 +1,20 @@
 package se.lth.solid.vilmer
 
-import android.content.Context
-import android.content.Intent
+import android.app.Activity
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 
 class CardAdapter(
-    var cardList: CardList,
-    var launcher: ActivityResultLauncher<Intent>,
-    val context: Context
+    var cardList: ArrayList<CardDataModel>
 ) : RecyclerView.Adapter<CardAdapter.CardHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardHolder {
@@ -27,7 +24,7 @@ class CardAdapter(
     }
 
     override fun onBindViewHolder(holder: CardHolder, position: Int) {
-        val card = cardList.cards[position]
+        val card = cardList[position]
 
         val rawBitmap = BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
         holder.imageView.setImageBitmap(rawBitmap)
@@ -35,18 +32,23 @@ class CardAdapter(
 
         holder.itemView.isClickable = true
 
-        holder.itemView.setOnClickListener {
-            val data = Intent(it.context, AddCardActivity::class.java)
-                .putExtra(AddCardActivity.CARD_EXTRA, card)
-                .putExtra(AddCardActivity.POSITION_EXTRA, holder.adapterPosition)
-                .putExtra(AddCardActivity.TAG_CHOICES_EXTRA, cardList.tags)
-            launcher.launch(data)
+        holder.itemView.setOnClickListener { view: View ->
+            val pos = holder.adapterPosition
+            val action = MainFragmentDirections.actionMainFragmentToAddCardFragment(pos)
+            view.findNavController().navigate(action)
         }
 
         val chipGroup = holder.chipGroup
         chipGroup.removeAllViews()
         card.tags.forEach { s ->
-            val chip = Chip(context)
+            val chip = Chip(holder.imageView.context)
+            val drawable = ChipDrawable.createFromAttributes(
+                holder.imageView.context,
+                null,
+                0,
+                R.style.ThinnerChip
+            )
+            chip.setChipDrawable(drawable)
             chip.text = s
 
             chip.isCheckable = false
@@ -56,7 +58,7 @@ class CardAdapter(
     }
 
     override fun getItemCount(): Int {
-        return cardList.cards.size
+        return cardList.size
     }
 
     class CardHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
