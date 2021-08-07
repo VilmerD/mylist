@@ -60,7 +60,6 @@ class AddCardFragment : Fragment() {
         }
 
         lists.getTags().forEach { addChip(it) }
-        lists.getTags().forEach { addChip(it) }
         viewBinding.tagChipGroup.children.forEach { view ->
             val chip = view as Chip
             card.tags.forEach { s ->

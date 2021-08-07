@@ -27,6 +27,7 @@ class FilterFragment : Fragment() {
 
         val chipGroup = viewBinding.filterChipGroup
         val tags = lists.getTags()
+        chipGroup.removeAllViews()
         tags.forEach { s: String ->
             val chip = Chip(context)
             chip.text = s
