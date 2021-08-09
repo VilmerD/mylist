@@ -15,7 +15,6 @@ import se.lth.solid.vilmer.databinding.FragmentFilterBinding
 class FilterFragment : Fragment() {
 
     private lateinit var viewBinding: FragmentFilterBinding
-
     private val lists: ListsViewModel by activityViewModels()
 
     override fun onCreateView(

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -59,7 +60,7 @@ class MyListAdapter(
     class ListHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var nameView: TextView = itemView.findViewById(R.id.list_name)
-        var editButton: Button = itemView.findViewById(R.id.editListButton)
+        var editButton: ImageButton = itemView.findViewById(R.id.editListButton)
         var tagChipGroup: ChipGroup = itemView.findViewById(R.id.tagChipGroup)
         lateinit var tags: ArrayList<String>
     }

@@ -21,7 +21,6 @@ class AddListFragment : Fragment() {
 
     private val args : AddListFragmentArgs by navArgs()
     private var position = -1
-    private lateinit var chipGroup : ChipGroup
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +28,6 @@ class AddListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_list, container, false)
-        chipGroup = viewBinding.tagChipGroup
         position = args.position
 
         if (position == -1) {
@@ -46,7 +44,6 @@ class AddListFragment : Fragment() {
             val tagName = viewBinding.tagsEditText.editText?.text.toString()
             viewBinding.tagsEditText.editText?.text!!.clear()
             list.tags.add(tagName)
-
             addChip(tagName)
         }
 
@@ -54,9 +51,7 @@ class AddListFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.done -> {
                     list.name = viewBinding.listNameEditText.editText?.text.toString()
-                    if (position == -1) {
-                        lists.addList(list)
-                    }
+                    if (position == -1) lists.addList(list)
                     requireActivity().onBackPressed()
                     true
                 }
@@ -65,9 +60,7 @@ class AddListFragment : Fragment() {
                     requireActivity().onBackPressed()
                     true
                 }
-                else -> {
-                    false
-                }
+                else -> false
             }
         }
 
@@ -90,8 +83,9 @@ class AddListFragment : Fragment() {
         chip.isClickable = false
         chip.isCheckable = false
 
-        val index = viewBinding.tagChipGroup.childCount
-        viewBinding.tagChipGroup.addView(chip as View, index)
+        val chipGroup = viewBinding.tagChipGroup
+        val index = chipGroup.childCount
+        chipGroup.addView(chip as View, index)
     }
 
     companion object {
