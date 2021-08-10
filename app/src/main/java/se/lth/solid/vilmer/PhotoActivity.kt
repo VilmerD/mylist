@@ -85,18 +85,21 @@ class PhotoActivity : AppCompatActivity() {
 
         // Set up image capture listener, which is triggered after photo has
         // been taken
-        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), object: ImageCapture.OnImageSavedCallback {
-            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                postProcess(file)
-                setResult(RESULT_OK)
-                finish()
-            }
+        imageCapture.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(this),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    postProcess(file)
+                    setResult(RESULT_OK)
+                    finish()
+                }
 
-            override fun onError(exc: ImageCaptureException) {
-                setResult(RESULT_CANCELED)
-                finish()
-            }
-        })
+                override fun onError(exc: ImageCaptureException) {
+                    setResult(RESULT_CANCELED)
+                    finish()
+                }
+            })
     }
 
     private fun startCamera() {
@@ -151,6 +154,7 @@ class PhotoActivity : AppCompatActivity() {
                 bitmap, 0, 0, width, height,
                 frame, true
             )
+            bitmap = null
         } else {
             rotatedBitmap = bitmap
         }
@@ -158,14 +162,19 @@ class PhotoActivity : AppCompatActivity() {
         // Cropping
         width = rotatedBitmap.width
         height = rotatedBitmap.height
-        val croppedWidth = if (width < height) width else 4*height/3
-        val croppedHeight = if (width < height) 3*width/4 else height
-        val x = (width - croppedWidth)/2
-        val y = (height - croppedHeight)/2
+        val croppedWidth = if (width < height) width else 4 * height / 3
+        val croppedHeight = if (width < height) 3 * width / 4 else height
+        val x = (width - croppedWidth) / 2
+        val y = (height - croppedHeight) / 2
         val croppedBitmap = Bitmap.createBitmap(rotatedBitmap, x, y, croppedWidth, croppedHeight)
+        rotatedBitmap = null
 
         // Scaling bitmap
-        val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true)
+        val dstHeight = (DIMENSION_RATIO * IMAGE_WIDTH).toInt()
+        val scaledBitmap = Bitmap.createScaledBitmap(
+            croppedBitmap, IMAGE_WIDTH,
+            dstHeight, true
+        )
 
         // Save image as jpeg again
         val fops: FileOutputStream?
@@ -210,6 +219,6 @@ class PhotoActivity : AppCompatActivity() {
         const val FILE_EXTRA = "se.lth.solid.vilmer.Project3.FILE_EXTRA"
 
         const val IMAGE_WIDTH = 540
-        const val IMAGE_HEIGHT = 540*3/4
+        const val DIMENSION_RATIO: Float = 0.75F
     }
 }

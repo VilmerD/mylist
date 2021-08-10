@@ -22,8 +22,6 @@ class MainFragment : Fragment() {
     private lateinit var viewBinding: FragmentMainBinding
     private val lists: ListsViewModel by activityViewModels()
 
-    private lateinit var mAdapter: CardAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         readLists()
@@ -39,19 +37,15 @@ class MainFragment : Fragment() {
         val mRecyclerView: RecyclerView = viewBinding.cardRecycler
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        mRecyclerView.adapter = CardAdapter(lists.getCardsFiltered())
 
-        mAdapter = CardAdapter(lists.getCardsFiltered())
-        mRecyclerView.adapter = mAdapter
-
-        val addCardButton = viewBinding.addCardButton
-        addCardButton.setOnClickListener {
+        viewBinding.addCardButton.setOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_addCardFragment)
         }
 
         viewBinding.topAppBar.setNavigationOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_manageListsFragment)
         }
-
         viewBinding.topAppBar.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.filter -> {
@@ -61,8 +55,8 @@ class MainFragment : Fragment() {
                 else -> false
             }
         }
-
         viewBinding.topAppBar.title = lists.getListName()
+
         return viewBinding.root
     }
 
@@ -77,8 +71,7 @@ class MainFragment : Fragment() {
             lists.myLists = ois.readObject() as ArrayList<CardList>
             ois.close()
         } catch (e: FileNotFoundException) {
-            val firstList = CardList("My List")
-            lists.myLists = arrayListOf(firstList)
+            lists.myLists = arrayListOf(CardList("My List"))
             writeLists()
         }
     }

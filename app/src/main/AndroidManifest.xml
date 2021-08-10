@@ -23,11 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddCardFragment"
-            android:label="@string/app_name">
-
-        </activity>
-        <activity
             android:name=".PhotoActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">

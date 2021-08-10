@@ -23,7 +23,7 @@ class AddCardFragment : Fragment() {
 
     private lateinit var viewBinding: FragmentAddCardBinding
 
-    private val lists : ListsViewModel by activityViewModels()
+    private val lists: ListsViewModel by activityViewModels()
     private val args: AddCardFragmentArgs by navArgs()
     private var position = -1
 
@@ -43,7 +43,8 @@ class AddCardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_card, container, false)
+        viewBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_add_card, container, false)
         position = args.position
 
         if (position == -1) {
@@ -52,19 +53,15 @@ class AddCardFragment : Fragment() {
             card = lists.getCardsFiltered()[position]
             viewBinding.cardNameEditText.editText?.setText(card.name)
         }
-        val img = BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
-        viewBinding.imageView.setImageBitmap(img)
+        viewBinding.imageView.setImageBitmap(
+            BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
+        )
 
-        viewBinding.photoButton.setOnClickListener {
-            takePicture()
-        }
+        viewBinding.photoButton.setOnClickListener { takePicture() }
 
-        lists.getTags().forEach { addChip(it) }
-        viewBinding.tagChipGroup.children.forEach { view ->
-            val chip = view as Chip
-            card.tags.forEach { s ->
-                if (chip.text == s) chip.isChecked = true
-            }
+        lists.getTags().forEach {
+            val chip = addChip(it)
+            if (card.tags.contains(chip.text)) chip.isChecked = true
         }
 
         viewBinding.topAppBar.setNavigationOnClickListener {
@@ -76,9 +73,7 @@ class AddCardFragment : Fragment() {
                 R.id.done -> {
                     card.name = viewBinding.cardNameEditText.editText?.text.toString()
                     card.tags = getTags()
-                    if (position == -1) {
-                        lists.addCard(card)
-                    }
+                    if (position == -1) lists.addCard(card)
                     requireActivity().onBackPressed()
                     true
                 }
@@ -103,26 +98,25 @@ class AddCardFragment : Fragment() {
                 ).format(System.currentTimeMillis()) + ".jpg"
             )
         }
-
         i.putExtra(PhotoActivity.FILE_EXTRA, card.file)
-
         startForResult.launch(i)
     }
 
-    private fun addChip(name: String) {
+    private fun addChip(name: String) : Chip {
         val chip = Chip(requireContext())
         chip.text = name
 
         chip.isClickable = true
         chip.isCheckable = true
 
-        val index = viewBinding.tagChipGroup.childCount - 1
+        val index = viewBinding.tagChipGroup.childCount
         viewBinding.tagChipGroup.addView(chip as View, index)
+        return chip
     }
 
-    private fun getTags() : ArrayList<String> {
+    private fun getTags(): ArrayList<String> {
         val chipGroup = viewBinding.tagChipGroup
-        val selectedTags : ArrayList<String> = arrayListOf()
+        val selectedTags: ArrayList<String> = arrayListOf()
         chipGroup.children
             .toList()
             .filter { (it as Chip).isChecked }
