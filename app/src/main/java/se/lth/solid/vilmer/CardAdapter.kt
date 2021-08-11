@@ -36,8 +36,6 @@ class CardAdapter(
             view.findNavController().navigate(action)
         }
 
-        addChips(holder, card)
-
         holder.gradeView.setImageResource(
             when (card.grade) {
                 2 -> R.drawable.ic_bad
@@ -49,26 +47,6 @@ class CardAdapter(
         )
     }
 
-    private fun addChips(holder: CardHolder, card: CardDataModel) {
-        val chipGroup = holder.chipGroup
-        chipGroup.removeAllViews()
-        card.tags.forEach { s ->
-            val chip = Chip(holder.imageView.context)
-            val drawable = ChipDrawable.createFromAttributes(
-                holder.imageView.context,
-                null,
-                0,
-                R.style.ThinnerChip
-            )
-            chip.setChipDrawable(drawable)
-            chip.text = s
-
-            chip.isCheckable = false
-            chip.isClickable = false
-            chipGroup.addView(chip as View)
-        }
-    }
-
     override fun getItemCount(): Int {
         return cardList.size
     }
@@ -76,7 +54,6 @@ class CardAdapter(
     class CardHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView: ImageView = itemView.findViewById(R.id.imageView)
         var nameView: TextView = itemView.findViewById(R.id.nameTextView)
-        var chipGroup: ChipGroup = itemView.findViewById(R.id.tagChipGroup)
         var gradeView: ImageView = itemView.findViewById(R.id.gradeView)
     }
 }
