@@ -64,7 +64,7 @@
                 android:id="@+id/photoButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
 
                 android:layout_margin="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -79,7 +79,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
             android:elevation="8dp"
             android:orientation="vertical">
 
@@ -87,11 +86,15 @@
                 android:id="@+id/cardNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+
                 android:hint="@string/card_name_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+
+                    android:maxLength="20">
 
                 </com.google.android.material.textfield.TextInputEditText>
 
@@ -100,9 +103,67 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/tagChipGroup"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp">
 
             </com.google.android.material.chip.ChipGroup>
+
+            <RadioGroup
+                android:id="@+id/gradeRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/badGrade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+
+                    android:background="@drawable/ic_bad"
+                    android:button="@android:color/transparent">
+
+                </RadioButton>
+
+                <RadioButton
+                    android:id="@+id/okGrade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="0"
+
+                    android:background="@drawable/ic_ok"
+                    android:button="@android:color/transparent">
+
+                </RadioButton>
+
+                <RadioButton
+                    android:id="@+id/goodGrade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="0"
+
+                    android:background="@drawable/ic_good"
+                    android:button="@android:color/transparent">
+
+                </RadioButton>
+
+                <RadioButton
+                    android:id="@+id/bestGrade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="0"
+
+                    android:background="@drawable/ic_best"
+                    android:button="@android:color/transparent">
+
+                </RadioButton>
+
+            </RadioGroup>
 
         </LinearLayout>
 

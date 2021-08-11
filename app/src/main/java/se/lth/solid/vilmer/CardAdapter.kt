@@ -28,15 +28,28 @@ class CardAdapter(
         val rawBitmap = BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
         holder.imageView.setImageBitmap(rawBitmap)
         holder.nameView.text = card.name
-
         holder.itemView.isClickable = true
 
         holder.itemView.setOnClickListener { view: View ->
-            val pos = holder.adapterPosition
-            val action = MainFragmentDirections.actionMainFragmentToAddCardFragment(pos)
+            val action =
+                MainFragmentDirections.actionMainFragmentToAddCardFragment(holder.adapterPosition)
             view.findNavController().navigate(action)
         }
 
+        addChips(holder, card)
+
+        holder.gradeView.setImageResource(
+            when (card.grade) {
+                2 -> R.drawable.ic_bad
+                3 -> R.drawable.ic_ok
+                4 -> R.drawable.ic_good
+                5 -> R.drawable.ic_best
+                else -> R.drawable.ic_ok
+            }
+        )
+    }
+
+    private fun addChips(holder: CardHolder, card: CardDataModel) {
         val chipGroup = holder.chipGroup
         chipGroup.removeAllViews()
         card.tags.forEach { s ->
@@ -64,5 +77,6 @@ class CardAdapter(
         var imageView: ImageView = itemView.findViewById(R.id.imageView)
         var nameView: TextView = itemView.findViewById(R.id.nameTextView)
         var chipGroup: ChipGroup = itemView.findViewById(R.id.tagChipGroup)
+        var gradeView: ImageView = itemView.findViewById(R.id.gradeView)
     }
 }
