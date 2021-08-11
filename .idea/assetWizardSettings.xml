@@ -359,8 +359,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="1b4179" />
-                            <entry key="outputName" value="ic_best" />
-                            <entry key="sourceFile" value="$PROJECT_DIR$/Icon/best/Best.svg" />
+                            <entry key="outputName" value="ic_okunchecked" />
+                            <entry key="sourceFile" value="$PROJECT_DIR$/Icon/OkUnchecked.svg" />
                           </map>
                         </option>
                       </PersistentState>
