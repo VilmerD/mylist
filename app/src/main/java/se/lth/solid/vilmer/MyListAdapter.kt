@@ -54,7 +54,7 @@ class MyListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return lists.size()
+        return lists.size
     }
 
     class ListHolder(itemView: View) :

@@ -6,7 +6,7 @@
   <path
       android:strokeWidth="1"
       android:pathData="M32,32m-31.5,0a31.5,31.5 0,1 1,63 0a31.5,31.5 0,1 1,-63 0"
-      android:fillColor="#f9ff86"
+      android:fillColor="@color/gradeUnchecked"
       android:strokeColor="#000"/>
   <path
       android:fillColor="#FF000000"

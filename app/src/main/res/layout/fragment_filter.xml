@@ -30,24 +30,35 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_margin="8dp"
-            android:text="@string/filter_text"
-            android:textSize="22sp">
-
-        </TextView>
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/filterChipGroup"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+            android:orientation="vertical"
+            android:background="@drawable/filter_background"
             android:layout_margin="8dp">
 
-        </com.google.android.material.chip.ChipGroup>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/filter_text"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="22sp">
+
+            </TextView>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/filterChipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="8dp">
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
 
     </LinearLayout>
 

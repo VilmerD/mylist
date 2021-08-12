@@ -8,9 +8,8 @@ class ListsViewModel(private val handle: SavedStateHandle) : ViewModel() {
     var filters: ArrayList<String>? = null
     var displaying = 0
 
-    fun size(): Int {
-        return myLists.size
-    }
+    val size: Int
+        get() = myLists.size
 
     fun addList(list: CardList) {
         myLists.add(list)
@@ -41,13 +40,10 @@ class ListsViewModel(private val handle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun getCards(): ArrayList<CardDataModel> {
-        return myLists[displaying].cards
-    }
-
     fun safeDeleteList(position: Int) : Boolean {
-        return if (myLists.size > 1 && position >= 0) {
+        return if (size > 1 && position >= 0) {
             myLists.removeAt(position)
+            displaying = displaying.coerceAtMost(myLists.size - 1)
             true
         } else {
             false
