@@ -1,6 +1,9 @@
 package se.lth.solid.vilmer
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +14,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import java.lang.IllegalStateException
 
 class MyListAdapter(
     var lists: ListsViewModel
@@ -31,15 +35,15 @@ class MyListAdapter(
 
         // onClick is used to select the current list as displaying list
         holder.nameView.setOnClickListener {
-            lists.displaying = holder.adapterPosition
-            (context as Activity).onBackPressed()
-        }
-
-        holder.editButton.setOnClickListener { view: View ->
             val pos = holder.adapterPosition
             val action =
                 ManageListsFragmentDirections.actionManageListsFragmentToAddListFragment(pos)
-            view.findNavController().navigate(action)
+            it.findNavController().navigate(action)
+        }
+
+        holder.editButton.setOnClickListener {
+            lists.displaying = holder.adapterPosition
+            (context as Activity).onBackPressed()
         }
 
         holder.tagChipGroup.removeAllViews()

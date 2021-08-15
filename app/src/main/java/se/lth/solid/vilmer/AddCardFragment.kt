@@ -28,6 +28,24 @@ class AddCardFragment : Fragment() {
     private var position = -1
 
     private lateinit var card: CardDataModel
+    private var grade: Int
+        get() =
+            when (viewBinding.gradeRadioGroup.checkedRadioButtonId) {
+                R.id.badGrade -> 2
+                R.id.okGrade -> 3
+                R.id.goodGrade -> 4
+                R.id.bestGrade -> 5
+                else -> 3
+            }
+        set(newGrade) {
+            when (newGrade) {
+                2 -> viewBinding.badGrade.isChecked = true
+                3 -> viewBinding.okGrade.isChecked = true
+                4 -> viewBinding.goodGrade.isChecked = true
+                5 -> viewBinding.bestGrade.isChecked = true
+                else -> viewBinding.okGrade.isChecked = true
+            }
+        }
 
     private val startForResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -38,6 +56,11 @@ class AddCardFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        position = args.position
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,7 +68,6 @@ class AddCardFragment : Fragment() {
     ): View {
         viewBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_add_card, container, false)
-        position = args.position
 
         if (position == -1) {
             card = CardDataModel(null, DEFAULT_CARD_NAME, arrayListOf())
@@ -56,7 +78,7 @@ class AddCardFragment : Fragment() {
         viewBinding.imageView.setImageBitmap(
             BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
         )
-        setGrade(card)
+        grade = card.grade
         viewBinding.photoButton.setOnClickListener { takePicture() }
 
         lists.getTags().forEach {
@@ -67,23 +89,25 @@ class AddCardFragment : Fragment() {
         viewBinding.topAppBar.setNavigationOnClickListener { requireActivity().onBackPressed() }
         viewBinding.topAppBar.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
-                R.id.done -> {
-                    card.name = viewBinding.cardNameEditText.editText?.text.toString()
-                    card.tags = getTags()
-                    card.grade = getGrade()
-                    if (position == -1) lists.addCard(card)
-                    requireActivity().onBackPressed()
-                    true
-                }
-                R.id.delete -> {
-                    lists.safeDeleteCard(position)
-                    requireActivity().onBackPressed()
-                    true
-                }
+                R.id.done -> { addCard(); true }
+                R.id.delete -> { deleteCard(); true }
                 else -> false
             }
         }
         return viewBinding.root
+    }
+
+    private fun addCard() {
+        card.name = viewBinding.cardNameEditText.editText?.text.toString()
+        card.tags = getTags()
+        card.grade = grade
+        if (position == -1) lists.addCard(card)
+        requireActivity().onBackPressed()
+    }
+
+    private fun deleteCard() {
+        lists.safeDeleteCard(position)
+        requireActivity().onBackPressed()
     }
 
     private fun takePicture() {
@@ -120,26 +144,6 @@ class AddCardFragment : Fragment() {
             .filter { (it as Chip).isChecked }
             .forEach { selectedTags.add((it as Chip).text.toString()) }
         return selectedTags
-    }
-
-    private fun getGrade(): Int {
-        return when (viewBinding.gradeRadioGroup.checkedRadioButtonId) {
-            R.id.badGrade -> 2
-            R.id.okGrade -> 3
-            R.id.goodGrade -> 4
-            R.id.bestGrade -> 5
-            else -> 0
-        }
-    }
-
-    private fun setGrade(card: CardDataModel) {
-        when (card.grade) {
-            2 -> viewBinding.badGrade.isChecked = true
-            3 -> viewBinding.okGrade.isChecked = true
-            4 -> viewBinding.goodGrade.isChecked = true
-            5 -> viewBinding.bestGrade.isChecked = true
-            else -> viewBinding.okGrade.isChecked = true
-        }
     }
 
     companion object {

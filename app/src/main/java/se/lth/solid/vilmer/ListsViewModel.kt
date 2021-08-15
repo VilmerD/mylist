@@ -30,10 +30,7 @@ class ListsViewModel(private val handle: SavedStateHandle) : ViewModel() {
     fun getCardsFiltered(): ArrayList<CardDataModel> {
         return if (filters != null && filters!!.isNotEmpty()) {
             ArrayList(myLists[displaying].cards.filter { card: CardDataModel ->
-                for (tag in card.tags) {
-                    if (filters!!.contains(tag)) return@filter true
-                }
-                false
+                card.tags.containsAll(filters!!)
             })
         } else {
             myLists[displaying].cards
@@ -41,12 +38,13 @@ class ListsViewModel(private val handle: SavedStateHandle) : ViewModel() {
     }
 
     fun safeDeleteList(position: Int) : Boolean {
-        return if (size > 1 && position >= 0) {
+        return if (size > 1) {
             myLists.removeAt(position)
             displaying = displaying.coerceAtMost(myLists.size - 1)
             true
         } else {
-            false
+            myLists[0] = CardList()
+            true
         }
     }
 

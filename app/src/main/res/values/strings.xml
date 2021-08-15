@@ -30,4 +30,12 @@
     // Filter
     <string name="filter_text">Tags</string>
     <string name="filter_fragment_title">Filters</string>
+    <string name="dialog_delete_list">Are you sure you want to delete this list? All data will be lost.</string>
+    <string name="delete_dialog_yes">Yes</string>
+    <string name="delete_dialog_no">No</string>
+    <string name="default_list_name">My List</string>
+    <string name="grade_header">Rating</string>
+    <string name="photo_button_description">Add Photo to Card</string>
+    <string name="image_view_description">Card Image</string>
+    <string name="tags_header">Tags</string>
 </resources>

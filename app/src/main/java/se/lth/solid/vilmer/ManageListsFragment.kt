@@ -11,6 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import se.lth.solid.vilmer.databinding.FragmentManageListsBinding
+import android.graphics.drawable.InsetDrawable
+import androidx.core.content.res.ResourcesCompat
+
 
 class ManageListsFragment : Fragment() {
 
@@ -33,8 +36,10 @@ class ManageListsFragment : Fragment() {
         mAdapter = MyListAdapter(lists)
         mRecyclerView.adapter = mAdapter
 
-        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        mRecyclerView.addItemDecoration(divider)
+        val insetDrawable = ResourcesCompat.getDrawable(resources, R.drawable.divider, null)!!
+        val itemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        itemDecoration.setDrawable(insetDrawable)
+        mRecyclerView.addItemDecoration(itemDecoration)
 
         viewBinding.topAppBar.setNavigationOnClickListener {
             requireActivity().onBackPressed()

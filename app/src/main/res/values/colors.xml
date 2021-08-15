@@ -20,4 +20,6 @@
     <!--Icon Colors-->
     <color name="gradeUnchecked">#B1BA00</color>
     <color name="gradeChecked">#EEFB00</color>
+
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
