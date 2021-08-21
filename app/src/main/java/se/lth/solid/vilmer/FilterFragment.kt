@@ -25,7 +25,7 @@ class FilterFragment : Fragment() {
         viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_filter, container, false)
 
         val chipGroup = viewBinding.filterChipGroup
-        val tags = lists.getTags()
+        val tags = lists.list.tags
         chipGroup.removeAllViews()
         tags.forEach { s: String ->
             val chip = Chip(context)
@@ -33,13 +33,16 @@ class FilterFragment : Fragment() {
             chip.isClickable = true
             chip.isCheckable = true
 
-            if (lists.filters != null && lists.filters!!.contains(s)) chip.isChecked = true
+            if (lists.tagFilters.contains(s)) chip.isChecked = true
 
             chipGroup.addView(chip as View)
         }
 
+        val filerGradeButton = viewBinding.filterRatingButton
+        filerGradeButton.isChecked = lists.filterGrade < 0
+
         viewBinding.topAppBar.setNavigationOnClickListener {
-            lists.filters = null
+            lists.tagFilters = arrayListOf()
             requireActivity().onBackPressed()
         }
 
@@ -51,7 +54,8 @@ class FilterFragment : Fragment() {
                         .toList()
                         .filter { (it as Chip).isChecked }
                         .forEach { filters.add((it as Chip).text.toString()) }
-                    lists.filters = filters
+                    lists.tagFilters = filters
+                    lists.filterGrade = if(filerGradeButton.isChecked) -1 else 1
                     requireActivity().onBackPressed()
                     true
                 }

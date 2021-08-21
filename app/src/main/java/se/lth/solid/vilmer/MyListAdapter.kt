@@ -1,20 +1,15 @@
 package se.lth.solid.vilmer
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import java.lang.IllegalStateException
 
 class MyListAdapter(
     var lists: ListsViewModel
@@ -42,7 +37,7 @@ class MyListAdapter(
         }
 
         holder.editButton.setOnClickListener {
-            lists.displaying = holder.adapterPosition
+            lists.displayingIndex = holder.adapterPosition
             (context as Activity).onBackPressed()
         }
 

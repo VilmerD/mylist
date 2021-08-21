@@ -1,46 +1,40 @@
 package se.lth.solid.vilmer
 
-import androidx.lifecycle.SavedStateHandle
+import android.util.Log
 import androidx.lifecycle.ViewModel
 
-class ListsViewModel(private val handle: SavedStateHandle) : ViewModel() {
+class ListsViewModel : ViewModel() {
     lateinit var myLists: ArrayList<CardList>
-    var filters: ArrayList<String>? = null
-    var displaying = 0
+    var tagFilters: ArrayList<String> = arrayListOf()
+    var filterGrade: Int = 0
+    var filterName: Int = 0
+
+    var displayingIndex = 0
 
     val size: Int
         get() = myLists.size
 
-    fun addList(list: CardList) {
-        myLists.add(list)
-    }
-
-    fun addCard(card: CardDataModel) {
-        myLists[displaying].cards.add(card)
-    }
-
-    fun getListName(): String {
-        return myLists[displaying].name
-    }
-
-    fun getTags(): ArrayList<String> {
-        return myLists[displaying].tags
-    }
+    val list: CardList
+        get() = myLists[displayingIndex]
 
     fun getCardsFiltered(): ArrayList<CardDataModel> {
-        return if (filters != null && filters!!.isNotEmpty()) {
-            ArrayList(myLists[displaying].cards.filter { card: CardDataModel ->
-                card.tags.containsAll(filters!!)
+        Log.d("ListsViewModel", "Filtering cards.")
+        var filteredCards = myLists[displayingIndex].cards
+        if (tagFilters.isNotEmpty()) {
+            filteredCards = ArrayList(filteredCards.filter { card: CardDataModel ->
+                card.tags.containsAll(tagFilters)
             })
-        } else {
-            myLists[displaying].cards
         }
+        filteredCards.sortWith { c1: CardDataModel, c2: CardDataModel ->
+            (c1.grade - c2.grade) * filterGrade
+        }
+        return filteredCards
     }
 
-    fun safeDeleteList(position: Int) : Boolean {
+    fun safeDeleteList(position: Int): Boolean {
         return if (size > 1) {
             myLists.removeAt(position)
-            displaying = displaying.coerceAtMost(myLists.size - 1)
+            displayingIndex = displayingIndex.coerceAtMost(myLists.size - 1)
             true
         } else {
             myLists[0] = CardList()
@@ -48,8 +42,8 @@ class ListsViewModel(private val handle: SavedStateHandle) : ViewModel() {
         }
     }
 
-    fun safeDeleteCard(position: Int) : Boolean {
-        val cards = myLists[displaying].cards
+    fun safeDeleteCard(position: Int): Boolean {
+        val cards = myLists[displayingIndex].cards
         return if (position >= 0 && position < cards.size) {
             cards.removeAt(position)
             true

@@ -33,30 +33,66 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_margin="8dp"
             android:background="@drawable/filter_background"
-            android:layout_margin="8dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="8dp"
-                android:text="@string/filter_text"
-                android:textColor="@color/primaryTextColor"
-                android:textSize="22sp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-            </TextView>
+                    android:layout_margin="8dp"
+                    android:text="@string/filter_tags_text"
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="22sp">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/filterChipGroup"
+                </TextView>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/filterChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_margin="8dp">
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:layout_margin="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-            </com.google.android.material.chip.ChipGroup>
+                    android:layout_margin="8dp"
+                    android:text="@string/filter_ratings_text"
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="22sp"
+
+                    android:layout_alignParentStart="true">
+
+                </TextView>
+
+                <ToggleButton
+                    android:id="@+id/filterRatingButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/filter_switch_drawable"
+                    android:textOff="@string/filter_ratings_toggle_button_text"
+                    android:textOn="@string/filter_ratings_toggle_button_text">
+
+                </ToggleButton>
+
+            </RelativeLayout>
 
         </LinearLayout>
 

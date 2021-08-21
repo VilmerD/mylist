@@ -28,7 +28,7 @@
     <string name="tags_hint">Add Tags</string>
 
     // Filter
-    <string name="filter_text">Tags</string>
+    <string name="filter_tags_text">Tags</string>
     <string name="filter_fragment_title">Filters</string>
     <string name="dialog_delete_list">Are you sure you want to delete this list? All data will be lost.</string>
     <string name="delete_dialog_yes">Yes</string>
@@ -38,4 +38,7 @@
     <string name="photo_button_description">Add Photo to Card</string>
     <string name="image_view_description">Card Image</string>
     <string name="tags_header">Tags</string>
+    <string name="filter_ratings_text">Ratings</string>
+    <string name="filter_ratings_toggle_button_text"> </string>
+    <string name="filter_name_text">Name</string>
 </resources>

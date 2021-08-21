@@ -77,7 +77,7 @@ class AddListFragment : Fragment() {
     private fun addList() {
         val name = viewBinding.listNameEditText.editText?.text.toString()
         if (name != "") list.name = name
-        if (position == -1) lists.addList(list)
+        if (position == -1) lists.myLists.add(list)
         requireActivity().onBackPressed()
     }
 

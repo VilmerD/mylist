@@ -81,7 +81,7 @@ class AddCardFragment : Fragment() {
         grade = card.grade
         viewBinding.photoButton.setOnClickListener { takePicture() }
 
-        lists.getTags().forEach {
+        lists.list.tags.forEach {
             val chip = addChip(it)
             if (card.tags.contains(chip.text)) chip.isChecked = true
         }
@@ -101,7 +101,7 @@ class AddCardFragment : Fragment() {
         card.name = viewBinding.cardNameEditText.editText?.text.toString()
         card.tags = getTags()
         card.grade = grade
-        if (position == -1) lists.addCard(card)
+        if (position == -1) lists.list.cards.add(card)
         requireActivity().onBackPressed()
     }
 
