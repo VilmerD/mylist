@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
+/***
+ * MyListAdapter is a custom adapter for the list manager view
+ */
 class MyListAdapter(
     var lists: ListsViewModel
 ) : RecyclerView.Adapter<MyListAdapter.ListHolder>() {
@@ -28,7 +31,7 @@ class MyListAdapter(
         holder.nameView.text = lists.myLists[position].name
         holder.tags = lists.myLists[position].tags
 
-        // onClick is used to select the current list as displaying list
+        // The name view can be clicked to edit the list
         holder.nameView.setOnClickListener {
             val pos = holder.adapterPosition
             val action =
@@ -36,11 +39,13 @@ class MyListAdapter(
             it.findNavController().navigate(action)
         }
 
+        // The button at the end of the list can be clicked to navigate back to the home screen
         holder.editButton.setOnClickListener {
             lists.displayingIndex = holder.adapterPosition
             (context as Activity).onBackPressed()
         }
 
+        // Setting up the chip group
         holder.tagChipGroup.removeAllViews()
         holder.tags.forEach {
             val chip = Chip(holder.itemView.context)

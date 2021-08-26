@@ -1,6 +1,7 @@
 package se.lth.solid.vilmer
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -31,6 +32,7 @@ class PhotoActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "in onCreate")
         super.onCreate(savedInstanceState)
 
         // Request camera permissions
@@ -69,12 +71,13 @@ class PhotoActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         cameraExecutor.shutdown()
     }
 
     private fun takePhoto() {
+        Log.d(TAG, "taking photo")
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -90,12 +93,15 @@ class PhotoActivity : AppCompatActivity() {
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    Log.d(TAG, "ImageCapture onImageSaved: ${file.absolutePath}")
                     postProcess(file)
-                    setResult(RESULT_OK)
+                    val data = Intent().putExtra(FILE_EXTRA, file)
+                    setResult(RESULT_OK, data)
                     finish()
                 }
 
                 override fun onError(exc: ImageCaptureException) {
+                    Log.d(TAG, "ImageCapture onError")
                     setResult(RESULT_CANCELED)
                     finish()
                 }
@@ -103,6 +109,7 @@ class PhotoActivity : AppCompatActivity() {
     }
 
     private fun startCamera() {
+        Log.d(TAG, "starting camera")
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
@@ -140,6 +147,7 @@ class PhotoActivity : AppCompatActivity() {
     }
 
     fun postProcess(imageFile: File) {
+        Log.d(TAG, "in postProcess")
         var bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
         var width = bitmap.width
         var height = bitmap.height
@@ -189,6 +197,7 @@ class PhotoActivity : AppCompatActivity() {
     }
 
     private fun getExifRotation(imageFile: File): Int {
+        Log.d(TAG, "getting rotation data")
         return try {
             val exif = ExifInterface(imageFile)
             when (exif.getAttributeInt(

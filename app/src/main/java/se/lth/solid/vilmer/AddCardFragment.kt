@@ -29,14 +29,15 @@ class AddCardFragment : Fragment() {
 
     private lateinit var card: CardDataModel
     private var grade: Int
-        get() =
-            when (viewBinding.gradeRadioGroup.checkedRadioButtonId) {
+        get() {
+            return when (viewBinding.gradeRadioGroup.checkedRadioButtonId) {
                 R.id.badGrade -> 2
                 R.id.okGrade -> 3
                 R.id.goodGrade -> 4
                 R.id.bestGrade -> 5
                 else -> 3
             }
+        }
         set(newGrade) {
             when (newGrade) {
                 2 -> viewBinding.badGrade.isChecked = true
@@ -47,10 +48,31 @@ class AddCardFragment : Fragment() {
             }
         }
 
+    private var selectedTags: ArrayList<String>
+        get() {
+            val selectedTags: ArrayList<String> = arrayListOf()
+            viewBinding.tagChipGroup.children
+                .toList()
+                .filter { (it as Chip).isChecked }
+                .forEach { selectedTags.add((it as Chip).text.toString()) }
+            return selectedTags
+        }
+        set(newTags) {
+            viewBinding.tagChipGroup.children.forEach { chip ->
+                val name = (chip as Chip).text
+                if (newTags.contains(name)) chip.isChecked = true
+            }
+        }
+
+    /***
+     * A launcher for the photo activity.
+     */
     private val startForResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            card.file = data?.getSerializableExtra(PhotoActivity.FILE_EXTRA) as File
             val img = BitmapFactory.decodeFile(card.file!!.absolutePath)
             viewBinding.imageView.setImageBitmap(img)
         }
@@ -69,6 +91,7 @@ class AddCardFragment : Fragment() {
         viewBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_add_card, container, false)
 
+        // Setting up the card
         if (position == -1) {
             card = CardDataModel(null, DEFAULT_CARD_NAME, arrayListOf())
         } else {
@@ -81,11 +104,10 @@ class AddCardFragment : Fragment() {
         grade = card.grade
         viewBinding.photoButton.setOnClickListener { takePicture() }
 
-        lists.list.tags.forEach {
-            val chip = addChip(it)
-            if (card.tags.contains(chip.text)) chip.isChecked = true
-        }
+        lists.list.tags.forEach { addChip(it) }
+        selectedTags = card.tags
 
+        // Setting up the top app bar
         viewBinding.topAppBar.setNavigationOnClickListener { requireActivity().onBackPressed() }
         viewBinding.topAppBar.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
@@ -97,33 +119,42 @@ class AddCardFragment : Fragment() {
         return viewBinding.root
     }
 
+    /***
+     * Adds the card to the list and returns
+     */
     private fun addCard() {
         card.name = viewBinding.cardNameEditText.editText?.text.toString()
-        card.tags = getTags()
+        card.tags = selectedTags
         card.grade = grade
         if (position == -1) lists.list.cards.add(card)
         requireActivity().onBackPressed()
     }
 
+    /***
+     * Deletes the card and returns
+     */
     private fun deleteCard() {
         lists.safeDeleteCard(position)
         requireActivity().onBackPressed()
     }
 
+    /***
+     * Helper function for taking a picture.
+     */
     private fun takePicture() {
         val i = Intent(requireContext(), PhotoActivity::class.java)
         if (card.file == null) {
-            card.file = File(
-                requireContext().filesDir,
-                SimpleDateFormat(
-                    FILENAME_FORMAT, Locale.US
-                ).format(System.currentTimeMillis()) + ".jpg"
-            )
+            val format = SimpleDateFormat(FILENAME_FORMAT, Locale.ENGLISH)
+                .format(System.currentTimeMillis()) + ".jpg"
+            card.file = File(requireContext().filesDir, format)
         }
         i.putExtra(PhotoActivity.FILE_EXTRA, card.file)
         startForResult.launch(i)
     }
 
+    /***
+     * Helper function for adding chips to the view
+     */
     private fun addChip(name: String): Chip {
         val chip = Chip(requireContext())
         chip.text = name
@@ -136,14 +167,26 @@ class AddCardFragment : Fragment() {
         return chip
     }
 
-    private fun getTags(): ArrayList<String> {
-        val chipGroup = viewBinding.tagChipGroup
-        val selectedTags: ArrayList<String> = arrayListOf()
-        chipGroup.children
-            .toList()
-            .filter { (it as Chip).isChecked }
-            .forEach { selectedTags.add((it as Chip).text.toString()) }
-        return selectedTags
+    /***
+     * Saves the state
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("NAME", viewBinding.cardNameEditText.editText?.text.toString())
+        outState.putStringArrayList("TAGS", selectedTags)
+        outState.putInt("GRADE", grade)
+    }
+
+    /***
+     * Restores the state
+     */
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            viewBinding.cardNameEditText.editText?.setText(savedInstanceState.getString("NAME"))
+            selectedTags = savedInstanceState.getStringArrayList("TAGS") ?: arrayListOf()
+            grade = savedInstanceState.getInt("GRADE")
+        }
     }
 
     companion object {

@@ -34,6 +34,7 @@ class MainFragment : Fragment() {
     ): View {
         viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
 
+        // Setting up the recycler
         val mRecyclerView: RecyclerView = viewBinding.cardRecycler
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -43,6 +44,7 @@ class MainFragment : Fragment() {
             findNavController().navigate(R.id.action_mainFragment_to_addCardFragment)
         }
 
+        // Setting up the top app bar
         viewBinding.topAppBar.setNavigationOnClickListener {
             findNavController().navigate(R.id.action_mainFragment_to_manageListsFragment)
         }
@@ -60,11 +62,17 @@ class MainFragment : Fragment() {
         return viewBinding.root
     }
 
+    /***
+     * Makes sure to write the data when the fragment is paused.
+     */
     override fun onPause() {
         super.onPause()
         writeLists()
     }
 
+    /***
+     * Helper function for reading the lists from file
+     */
     private fun readLists() {
         try {
             val ois = ObjectInputStream(requireContext().openFileInput(saveFileName))
@@ -76,6 +84,9 @@ class MainFragment : Fragment() {
         }
     }
 
+    /***
+     * Helper function for writing lists to file
+     */
     private fun writeLists() {
         try {
             val oos = ObjectOutputStream(

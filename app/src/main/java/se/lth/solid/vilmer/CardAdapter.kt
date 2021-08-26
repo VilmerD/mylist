@@ -12,6 +12,9 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 
+/***
+ * CardAdapter is a custom adapter that is used for the cards
+ */
 class CardAdapter(
     var cardList: ArrayList<CardDataModel>
 ) : RecyclerView.Adapter<CardAdapter.CardHolder>() {
@@ -25,6 +28,7 @@ class CardAdapter(
     override fun onBindViewHolder(holder: CardHolder, position: Int) {
         val card = cardList[position]
 
+        // Setting up the card
         val rawBitmap = BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
         holder.imageView.setImageBitmap(rawBitmap)
         holder.nameView.text = card.name
@@ -51,6 +55,7 @@ class CardAdapter(
         return cardList.size
     }
 
+    // The holder for the card
     class CardHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView: ImageView = itemView.findViewById(R.id.imageView)
         var nameView: TextView = itemView.findViewById(R.id.nameTextView)

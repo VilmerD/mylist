@@ -23,6 +23,7 @@ class AddListFragment : Fragment() {
     private lateinit var viewBinding: FragmentAddListBinding
     private val lists: ListsViewModel by activityViewModels()
     private lateinit var list: CardList
+    private lateinit var tags: ArrayList<String>
 
     private val args: AddListFragmentArgs by navArgs()
     private var position = -1
@@ -36,37 +37,31 @@ class AddListFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_add_list, container, false)
         position = args.position
 
+        // Position of -1 indicates that the user wants to add a new cardlist
         if (position == -1) {
             list = CardList()
         } else {
             list = lists.myLists[position]
             viewBinding.listNameEditText.editText?.setText(list.name)
         }
-
-        list.tags.forEach { addChip(it) }
+        tags = list.tags.clone() as ArrayList<String>
 
         // Preparing buttons
         viewBinding.tagsEditText.setEndIconOnClickListener {
             val tagName = viewBinding.tagsEditText.editText?.text.toString()
             viewBinding.tagsEditText.editText?.text!!.clear()
-            list.tags.add(tagName)
+            tags.add(tagName)
             addChip(tagName)
         }
 
+        // Setting up the top app bar
         viewBinding.topAppBar.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
-                R.id.done -> {
-                    addList()
-                    true
-                }
-                R.id.delete -> {
-                    removeList()
-                    true
-                }
+                R.id.done -> { addList(); true }
+                R.id.delete -> { removeList(); true }
                 else -> false
             }
         }
-
         viewBinding.topAppBar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }
@@ -74,25 +69,40 @@ class AddListFragment : Fragment() {
         return viewBinding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        tags.forEach { addChip(it) }
+    }
+
+    /***
+     * Helper function for adding the list to the list of lists
+     */
     private fun addList() {
         val name = viewBinding.listNameEditText.editText?.text.toString()
+        list.tags = tags
         if (name != "") list.name = name
         if (position == -1) lists.myLists.add(list)
         requireActivity().onBackPressed()
     }
 
+    /***
+     * Helper function for removing the list from the list of lists
+     */
     private fun removeList() {
         val dialog = alertBuilder()
         dialog.show()
     }
 
+    /***
+     * Helper function for adding chips to the chip group
+     */
     private fun addChip(name: String) {
         val chip = Chip(requireContext())
         chip.text = name
         chip.isCloseIconVisible = true
         chip.setOnCloseIconClickListener {
             viewBinding.tagChipGroup.removeView(chip as View)
-            list.tags.remove(name)
+            tags.remove(name)
         }
 
         chip.isClickable = false
@@ -103,6 +113,25 @@ class AddListFragment : Fragment() {
         chipGroup.addView(chip as View, index)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("NAME", viewBinding.listNameEditText.editText?.text.toString())
+        outState.putString("TAG", viewBinding.tagsEditText.editText?.text.toString())
+        outState.putStringArrayList("TAGS", tags)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            viewBinding.listNameEditText.editText?.setText(savedInstanceState.getString("NAME"))
+            viewBinding.tagsEditText.editText?.setText(savedInstanceState.getString("TAG"))
+            tags = savedInstanceState.getStringArrayList("TAGS") ?: arrayListOf()
+        }
+    }
+
+    /***
+     * Builds the alert that warns the user from removing the list
+     */
     private fun alertBuilder(): AlertDialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
