@@ -98,9 +98,6 @@ class AddCardFragment : Fragment() {
             card = lists.getCardsFiltered()[position]
             viewBinding.cardNameEditText.editText?.setText(card.name)
         }
-        viewBinding.imageView.setImageBitmap(
-            BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
-        )
         grade = card.grade
         viewBinding.photoButton.setOnClickListener { takePicture() }
 
@@ -117,6 +114,13 @@ class AddCardFragment : Fragment() {
             }
         }
         return viewBinding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewBinding.imageView.setImageBitmap(
+            BitmapFactory.decodeFile(card.file?.absolutePath) ?: null
+        )
     }
 
     /***
@@ -175,6 +179,7 @@ class AddCardFragment : Fragment() {
         outState.putString("NAME", viewBinding.cardNameEditText.editText?.text.toString())
         outState.putStringArrayList("TAGS", selectedTags)
         outState.putInt("GRADE", grade)
+        outState.putSerializable("FILE", card.file)
     }
 
     /***
@@ -186,6 +191,7 @@ class AddCardFragment : Fragment() {
             viewBinding.cardNameEditText.editText?.setText(savedInstanceState.getString("NAME"))
             selectedTags = savedInstanceState.getStringArrayList("TAGS") ?: arrayListOf()
             grade = savedInstanceState.getInt("GRADE")
+            card.file = savedInstanceState.getSerializable("FILE") as File
         }
     }
 

@@ -1,10 +1,12 @@
 package se.lth.solid.vilmer
 
+import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 class ListsViewModel : ViewModel() {
-    lateinit var myLists: ArrayList<CardList>
+    var myLists: ArrayList<CardList> = arrayListOf()
     var tagFilters: ArrayList<String> = arrayListOf()
     var filterGrade: Int = 0
 
@@ -66,4 +68,5 @@ class ListsViewModel : ViewModel() {
             false
         }
     }
+
 }

@@ -71,7 +71,7 @@ dependencies {
     // CameraX Lifecycle Library
     implementation "androidx.camera:camera-lifecycle:$camerax_version"
     // CameraX View class
-    implementation "androidx.camera:camera-view:1.0.0-alpha27"
+    implementation "androidx.camera:camera-view:1.0.0-alpha28"
 
     // Room
     def room_version = "2.3.0"
@@ -81,4 +81,16 @@ dependencies {
 
     // To use Kotlin annotation processing tool (kapt)
     kapt "androidx.room:room-compiler:$room_version"
+
+    // Koin
+    def koin_version = "3.1.2"
+    implementation "io.insert-koin:koin-core:$koin_version"
+    // Koin main features for Android (Scope,ViewModel ...)
+    implementation "io.insert-koin:koin-android:$koin_version"
+    // Koin Java Compatibility
+    implementation "io.insert-koin:koin-android-compat:$koin_version"
+    // Koin for Jetpack WorkManager
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
+    // Koin for Jetpack Compose
+    implementation "io.insert-koin:koin-androidx-compose:$koin_version"
 }

@@ -1,9 +1,6 @@
 package se.lth.solid.vilmer
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -12,16 +9,17 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import se.lth.solid.vilmer.databinding.FragmentAddListBinding
 import java.lang.IllegalStateException
 
 class AddListFragment : Fragment() {
 
     private lateinit var viewBinding: FragmentAddListBinding
-    private val lists: ListsViewModel by activityViewModels()
+    private val lists: ListsViewModel by sharedViewModel<ListsViewModel>()
     private lateinit var list: CardList
     private lateinit var tags: ArrayList<String>
 

@@ -1,6 +1,7 @@
 package se.lth.solid.vilmer
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,14 +13,19 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import se.lth.solid.vilmer.databinding.FragmentManageListsBinding
 import androidx.core.content.res.ResourcesCompat
-
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ManageListsFragment : Fragment() {
 
     private lateinit var viewBinding: FragmentManageListsBinding
-    private lateinit var mAdapter: MyListAdapter
+    private val lists: ListsViewModel by sharedViewModel()
 
-    private val lists: ListsViewModel by activityViewModels()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,8 +39,7 @@ class ManageListsFragment : Fragment() {
         val mRecyclerView = viewBinding.listRecycler
         mRecyclerView.setHasFixedSize(true)
         mRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        mAdapter = MyListAdapter(lists)
-        mRecyclerView.adapter = mAdapter
+        mRecyclerView.adapter = MyListAdapter(lists)
 
         // Setting up the divider
         val insetDrawable = ResourcesCompat.getDrawable(resources, R.drawable.divider, null)!!
@@ -51,5 +56,9 @@ class ManageListsFragment : Fragment() {
         }
 
         return viewBinding.root
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 }
